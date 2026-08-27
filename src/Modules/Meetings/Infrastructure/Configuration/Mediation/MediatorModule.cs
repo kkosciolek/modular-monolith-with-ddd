@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Autofac;
 using Autofac.Core;
 using Autofac.Features.Variance;
@@ -18,6 +18,8 @@ namespace CompanyName.MyMeetings.Modules.Meetings.Infrastructure.Configuration.M
             .As<IServiceProvider>()
             .InstancePerDependency()
             .IfNotRegistered(typeof(IServiceProvider));
+
+            MediatRLicense.RegisterAutofac(builder);
 
             builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
                 .AsImplementedInterfaces()

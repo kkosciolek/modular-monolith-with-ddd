@@ -1,4 +1,5 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Application;
+﻿using System.Security.Claims;
+using CompanyName.MyMeetings.BuildingBlocks.Application;
 
 namespace CompanyName.MyMeetings.API.Configuration.ExecutionContext
 {
@@ -15,15 +16,12 @@ namespace CompanyName.MyMeetings.API.Configuration.ExecutionContext
         {
             get
             {
-                if (_httpContextAccessor
-                    .HttpContext?
-                    .User?
-                    .Claims?
-                    .SingleOrDefault(x => x.Type == "sub")?
-                    .Value != null)
+                var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue("sub")
+                             ?? _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    return Guid.Parse(_httpContextAccessor.HttpContext.User.Claims.Single(
-                        x => x.Type == "sub").Value);
+                    return Guid.Parse(userId);
                 }
 
                 throw new ApplicationException("User context is not available");
