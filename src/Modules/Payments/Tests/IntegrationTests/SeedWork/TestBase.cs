@@ -107,10 +107,11 @@ namespace CompanyName.MyMeetings.Modules.Payments.IntegrationTests.SeedWork
             const string sql = "DELETE FROM [payments].[InboxMessages] " +
                                "DELETE FROM [payments].[InternalCommands] " +
                                "DELETE FROM [payments].[OutboxMessages] " +
-                               "DELETE FROM payments.Messages " +
-                               "DBCC CHECKIDENT ('payments.Messages', RESEED, 0); " +
-                               "DELETE FROM payments.Streams " +
-                               "DBCC CHECKIDENT ('payments.Streams', RESEED, 0); " +
+                               "IF OBJECT_ID(N'[payments].[pc_events]', N'U') IS NOT NULL DELETE FROM [payments].[pc_events] " +
+                               "IF OBJECT_ID(N'[payments].[pc_streams]', N'U') IS NOT NULL DELETE FROM [payments].[pc_streams] " +
+                               "IF OBJECT_ID(N'[payments].[pc_event_progression]', N'U') IS NOT NULL DELETE FROM [payments].[pc_event_progression] " +
+                               "IF OBJECT_ID(N'[payments].[Messages]', N'U') IS NOT NULL DELETE FROM payments.Messages " +
+                               "IF OBJECT_ID(N'[payments].[Streams]', N'U') IS NOT NULL DELETE FROM payments.Streams " +
                                "DELETE FROM payments.SubscriptionDetails " +
                                "DELETE FROM [payments].[SubscriptionCheckpoints] " +
                                "DELETE FROM [payments].PriceListItems " +

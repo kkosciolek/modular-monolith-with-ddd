@@ -57,6 +57,7 @@ namespace CompanyName.MyMeetings.API
             services.AddSwaggerDocumentation();
 
             services.ConfigureIdentityService();
+            MediatRLicense.Apply(_configuration["Licenses:MediatR"]);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IExecutionContextAccessor, ExecutionContextAccessor>();

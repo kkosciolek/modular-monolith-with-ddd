@@ -1,4 +1,4 @@
-﻿using DbUp;
+using DbUp;
 using DbUp.ScriptProviders;
 using Serilog;
 using Serilog.Formatting.Compact;
@@ -48,7 +48,7 @@ namespace DatabaseMigrator
                         IncludeSubDirectories = true
                     })
                     .LogTo(serilogUpgradeLog)
-                    .JournalToSqlTable("app", "MigrationsJournal")
+                    .JournalToSqlTable("app", "MigrationsHistory")
                     .Build();
 
             var result = upgrader.PerformUpgrade();

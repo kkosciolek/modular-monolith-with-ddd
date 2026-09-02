@@ -40,11 +40,14 @@ namespace CompanyName.MyMeetings.SUT.SeedWork
                 "DELETE FROM [payments].[InboxMessages] " +
                 "DELETE FROM [payments].[InternalCommands] " +
                 "DELETE FROM [payments].[MeetingFees] " +
-                "DELETE FROM [payments].[Messages] " +
+                "IF OBJECT_ID(N'[payments].[pc_events]', N'U') IS NOT NULL DELETE FROM [payments].[pc_events] " +
+                "IF OBJECT_ID(N'[payments].[pc_streams]', N'U') IS NOT NULL DELETE FROM [payments].[pc_streams] " +
+                "IF OBJECT_ID(N'[payments].[pc_event_progression]', N'U') IS NOT NULL DELETE FROM [payments].[pc_event_progression] " +
+                "IF OBJECT_ID(N'[payments].[Messages]', N'U') IS NOT NULL DELETE FROM [payments].[Messages] " +
                 "DELETE FROM [payments].[OutboxMessages] " +
                 "DELETE FROM [payments].[Payers] " +
                 "DELETE FROM [payments].[PriceListItems] " +
-                "DELETE FROM [payments].[Streams] " +
+                "IF OBJECT_ID(N'[payments].[Streams]', N'U') IS NOT NULL DELETE FROM [payments].[Streams] " +
                 "DELETE FROM [payments].[SubscriptionCheckpoints] " +
                 "DELETE FROM [payments].[SubscriptionDetails] " +
                 "DELETE FROM [payments].[SubscriptionPayments] ";
