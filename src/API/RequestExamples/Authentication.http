@@ -1,14 +1,7 @@
 ﻿@baseUrl = http://localhost:5000
-### Authenticate Member
-POST {{baseUrl}}/connect/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=password&username=testMember@mail.com&password=testMemberPass&client_id=ro.client&client_secret=secret
-
-### Authenticate Admin
-POST {{baseUrl}}/connect/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=password&username=testAdmin@mail.com&password=testAdminPass&client_id=ro.client&client_secret=secret
-
-
+### Authorization code + PKCE
+# Password grant was removed. Use Swagger Authorize (OAuth2, PKCE, client_id=spa)
+# or a public client against:
+#   GET  {{baseUrl}}/connect/authorize
+#   POST {{baseUrl}}/connect/token
+# Login page: {{baseUrl}}/account/login

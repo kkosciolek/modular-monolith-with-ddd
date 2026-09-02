@@ -1,7 +1,11 @@
-<Project Sdk="MSBuild.Sdk.SqlProj/2.6.1">
+<Project Sdk="MSBuild.Sdk.SqlProj/4.3.0">
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <SqlServerVersion>Sql130</SqlServerVersion>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\CompanyName.MyMeetings.Database\Structure\**\*.sql" />

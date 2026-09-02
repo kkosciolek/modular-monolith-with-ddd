@@ -22,13 +22,24 @@ namespace CompanyName.MyMeetings.API.Configuration.Extensions
                 var commentsFile = Path.Combine(baseDirectory, commentsFileName);
                 options.IncludeXmlComments(commentsFile);
 
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    Description =
-                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("/connect/authorize", UriKind.Relative),
+                            TokenUrl = new Uri("/connect/token", UriKind.Relative),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "openid", "OpenID" },
+                                { "profile", "Profile" },
+                                { "email", "Email" },
+                                { "all", "MyMeetings API" }
+                            }
+                        }
+                    }
                 });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -39,13 +50,10 @@ namespace CompanyName.MyMeetings.API.Configuration.Extensions
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header
+                                Id = "oauth2"
+                            }
                         },
-                        new List<string>()
+                        new List<string> { "openid", "profile", "email", "all" }
                     }
                 });
             });
@@ -57,7 +65,15 @@ namespace CompanyName.MyMeetings.API.Configuration.Extensions
         {
             app.UseSwagger();
 
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyMeetings API"); });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyMeetings API");
+                c.OAuthClientId("spa");
+                c.OAuthAppName("MyMeetings API");
+                c.OAuthUsePkce();
+                c.OAuthScopeSeparator(" ");
+                c.OAuthScopes("openid", "profile", "email", "all");
+            });
 
             return app;
         }

@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CompanyName.MyMeetings.API.Configuration.Authorization;
 using CompanyName.MyMeetings.API.Configuration.ExecutionContext;
@@ -10,6 +10,7 @@ using CompanyName.MyMeetings.API.Modules.Payments;
 using CompanyName.MyMeetings.API.Modules.UserAccess;
 using CompanyName.MyMeetings.BuildingBlocks.Application;
 using CompanyName.MyMeetings.BuildingBlocks.Domain;
+using CompanyName.MyMeetings.BuildingBlocks.Infrastructure;
 using CompanyName.MyMeetings.BuildingBlocks.Infrastructure.Emails;
 using CompanyName.MyMeetings.Modules.Administration.Infrastructure.Configuration;
 using CompanyName.MyMeetings.Modules.Meetings.Infrastructure.Configuration;
@@ -33,9 +34,11 @@ namespace CompanyName.MyMeetings.API
         private static ILogger _logger;
         private static ILogger _loggerForApi;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
         public Startup(IWebHostEnvironment env)
         {
+            _env = env;
             ConfigureLogger();
 
             _configuration = new ConfigurationBuilder()
@@ -52,12 +55,13 @@ namespace CompanyName.MyMeetings.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
 
             services.AddSwaggerDocumentation();
 
-            services.ConfigureIdentityService();
             MediatRLicense.Apply(_configuration["Licenses:MediatR"]);
+
+            services.ConfigureIdentityService(_configuration, _env);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IExecutionContextAccessor, ExecutionContextAccessor>();
@@ -73,7 +77,7 @@ namespace CompanyName.MyMeetings.API
                 options.AddPolicy(HasPermissionAttribute.HasPermissionPolicyName, policyBuilder =>
                 {
                     policyBuilder.Requirements.Add(new HasPermissionAuthorizationRequirement());
-                    policyBuilder.AddAuthenticationSchemes("Bearer");
+                    policyBuilder.AddAuthenticationSchemes(IdentityConfiguration.AuthenticationScheme);
                 });
             });
 
@@ -102,8 +106,6 @@ namespace CompanyName.MyMeetings.API
 
             app.UseSwaggerDocumentation();
 
-            app.AddIdentityService();
-
             if (env.IsDevelopment())
             {
                 app.UseProblemDetails();
@@ -114,11 +116,14 @@ namespace CompanyName.MyMeetings.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
-            // app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

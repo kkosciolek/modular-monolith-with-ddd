@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
 
   backend:
@@ -14,6 +12,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Meetings_ConnectionStrings__MeetingsConnectionString=Server=mymeetingsdb,1433;Database=MyMeetings;User=sa;Password=Test@12345;Encrypt=False;TrustServerCertificate=True;
       - Meetings_Licenses__MediatR=eyJhbGciOiJSUzI1NiIsImtpZCI6Ikx1Y2t5UGVubnlTb2Z0d2FyZUxpY2Vuc2VLZXkvYmJiMTNhY2I1OTkwNGQ4OWI0Y2IxYzg1ZjA4OGNjZjkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2x1Y2t5cGVubnlzb2Z0d2FyZS5jb20iLCJhdWQiOiJMdWNreVBlbm55U29mdHdhcmUiLCJleHAiOiIxNzk1MzA1NjAwIiwiaWF0IjoiMTc2MzgwNjA3NCIsImFjY291bnRfaWQiOiIwMTlhYWIwODBhNTc3OWNiYjc1Mjg0MDI5NzQyNDAwZCIsImN1c3RvbWVyX2lkIjoiY3RtXzAxa2FuZ2huY2poa2VxbnFmdjlkMnpnOXkzIiwic3ViX2lkIjoiLSIsImVkaXRpb24iOiIwIiwidHlwZSI6IjIifQ.jkEXdbMEYOVqbi4JO_pvEIDk5Yd67efLsMqXCDhYGSYYO1-Y9uPLgIDrhEhXsxPSwtQExF5VgIlBM76dolsrbEXCLQYyyzYTSQSmQRASAnUNxIErPhX-IDj2O2SSTfNcaY4HlfM8RTv70Bz8W4NQ5uDvkyYqFdIaRUdk4673sjlpjHNli6mXRyf6T7iZeZ7h9xDe76j7-3u4PWnmLnOG67930PAf_OdgpRCptkVBtPfTOXfx5MnlgzBh1qIVH3LrouSmMDQGph6mBiefksdHsiPezSUE6vEVnhAZvLV709XyNOE6uOFj9cBdqBc3N_NQHQgWevlGzrfR6WiFSx-2Xw
+      - Meetings_Auth__SigningCertificatePath=
+      - Meetings_Auth__SigningCertificatePassword=
+      - Meetings_Auth__EncryptionCertificatePath=
+      - Meetings_Auth__EncryptionCertificatePassword=
     depends_on:
       - migrator
     restart: on-failure

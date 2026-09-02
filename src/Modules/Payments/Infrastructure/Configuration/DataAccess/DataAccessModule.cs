@@ -4,8 +4,10 @@ using CompanyName.MyMeetings.BuildingBlocks.Infrastructure;
 using CompanyName.MyMeetings.Modules.Payments.Application.Configuration.Projections;
 using CompanyName.MyMeetings.Modules.Payments.Domain.SeedWork;
 using CompanyName.MyMeetings.Modules.Payments.Infrastructure.AggregateStore;
+using JasperFx.Events;
 using Microsoft.Extensions.Logging;
-using SqlStreamStore;
+using Polecat;
+using Polecat.Serialization;
 
 namespace CompanyName.MyMeetings.Modules.Payments.Infrastructure.Configuration.DataAccess
 {
@@ -27,19 +29,26 @@ namespace CompanyName.MyMeetings.Modules.Payments.Infrastructure.Configuration.D
                 .WithParameter("connectionString", _databaseConnectionString)
                 .InstancePerLifetimeScope();
 
-            builder.Register(a =>
-            new MsSqlStreamStore(new MsSqlStreamStoreSettings(_databaseConnectionString)
+            var store = DocumentStore.For(opts =>
             {
-                Schema = DatabaseSchema.Name
-            }))
-                .As<IStreamStore>();
+                opts.Connection(_databaseConnectionString);
+                opts.DatabaseSchemaName = DatabaseSchema.Name;
+                opts.Events.StreamIdentity = StreamIdentity.AsString;
+                ((Serializer)opts.Serializer).Configure(PolecatSerialization.Configure);
+                opts.Projections.Subscribe(new PaymentsEventSubscription(), _ => { });
+                opts.Events.AddEventTypes(DomainEventTypeMappings.Dictionary.Values);
+            });
 
-            builder.RegisterType<SqlStreamAggregateStore>()
-                .As<IAggregateStore>()
+            builder.RegisterInstance(store)
+                .As<IDocumentStore>()
+                .SingleInstance();
+
+            builder.Register(context => context.Resolve<IDocumentStore>().LightweightSession())
+                .As<IDocumentSession>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<SqlServerCheckpointStore>()
-                .As<ICheckpointStore>()
+            builder.RegisterType<PolecatAggregateStore>()
+                .As<IAggregateStore>()
                 .InstancePerLifetimeScope();
 
             var applicationAssembly = typeof(IProjector).Assembly;
